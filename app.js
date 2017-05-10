@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var md5 = require('MD5');
 
 var app = express();
 // Body parser midleware
@@ -21,9 +22,9 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (!err) {
-        console.log("Database is connected ... nn");
+        console.log("Database is connected ...");
     } else {
-        console.log("Error connecting database ... nn");
+        console.log("Error connecting database ... ");
     }
 });
 
@@ -53,19 +54,53 @@ app.post("/register", function(req, res) {
     })
 })
 
-app.use('/login', function(req, res) {
+app.post('/login', function(req, res) {
     var data = {
         email: req.body.email,
         password: req.body.password
     }
-
-
     var query = "SELECT * FROM users WHERE email= " + mysql.escape(data.email) + " AND password= " + mysql.escape(data.password) + "";
-    console.log(query);
+
     connection.query(query, function(err, rows, fields) {
         if (err) throw err;
-        res.json({ success: true, msg: 'Ada Users', email: rows[0].email, password: rows[0].password });
+        res.json({ success: true, msg: 'User Exist', email: rows[0].email, password: rows[0].password });
     })
+});
+
+
+app.delete('/users/delete/:id', function(req, res) {
+    var id = req.params.id;
+    var query = "DELETE from ?? WHERE ??=?";
+    var table = ["users", "id", id];
+    query = mysql.format(query, table);
+
+    connection.query(query, function(err, rows) {
+        if (err) {
+            res.json({ success: false, msg: "Error delete in mysql query" });
+        } else {
+            res.json({ success: true, msg: "Succes delete data" });
+        }
+    });
+});
+
+app.put('/users/update', function(req, res) {
+    var data = {
+        email: req.body.email,
+        password: md5(req.body.password),
+        name: req.body.name
+    };
+
+    var query = "UPDATE ?? SET ? WHERE ?? = ?";
+    var table = ["users", data, "email", data.email];
+    query = mysql.format(query, table);
+    console.log(query);
+    connection.query(query, function(err, rows) {
+        if (err) {
+            res.json({ success: false, msg: "Error update in mysql query" });
+        } else {
+            res.json({ success: true, msg: "User updated" });
+        }
+    });
 });
 
 // Start server
