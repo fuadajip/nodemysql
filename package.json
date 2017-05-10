@@ -1,0 +1,21 @@
+{
+  "name": "nodemysql",
+  "version": "1.0.0",
+  "description": "Node js with MySQL",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app"
+  },
+  "keywords": [
+    "node",
+    "mysql"
+  ],
+  "author": "fuadajip",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mysql": "^2.13.0",
+    "node-js": "^1.0.0"
+  }
+}
